@@ -1,21 +1,81 @@
 package totext
 
 import (
-    "fmt"
+    "io"
     "bytes"
     "compress/zlib"
-    "io"
+	"encoding/base64"
 )
 
 
-func Deflate(text string) (string, error){
-    r, err := compress(bytes.NewBufferString(text))
+func Deflate(text string) (string, error) {
+
+    zlibBuffer, err := compressStringToZlib(text)
     if err != nil {
         panic(err)
     }
 
-    b := r.Bytes()
-    fmt.Printf("%d bytes: %v\n", len(b), b)
+	base64String, _ := convertBytesToBase64String(zlibBuffer.Bytes())
+    if err != nil {
+        panic(err)
+    }
 
-	return "test", nil
+	return base64String, nil
+}
+
+func compressStringToZlib(text string) (*bytes.Buffer, error) {
+
+	textBuffer := bytes.NewBufferString(text)
+    zlibBuffer := new(bytes.Buffer)
+    zlibWriter := zlib.NewWriter(zlibBuffer)
+    defer zlibWriter.Close()
+
+    if _, err := io.Copy(zlibWriter, textBuffer); err != nil {
+        return nil, err
+    }
+    return zlibBuffer, nil
+}
+
+func convertBytesToBase64String(b []byte) (string, error) {
+	base64String := base64.StdEncoding.EncodeToString(b)
+	return base64String, nil
+}
+
+func Inflate(base64String string) (string, error) {
+
+	bytes, err := convertBase64StringToBytes(base64String)
+	if err != nil {
+		return "", err
+	}
+
+	inflated, err := decompressZlibToString(bytes)
+	if err != nil {
+		return "", err
+	}
+
+	return inflated, nil
+}
+
+func convertBase64StringToBytes(base64String string) ([]byte, error) {
+
+	bytes, err := base64.StdEncoding.DecodeString(base64String)
+    if err != nil {
+		return nil, err
+    }
+
+	return bytes, nil
+}
+
+func decompressZlibToString(zlibBytes []byte) (string, error) {
+
+	bytesReader := bytes.NewReader(zlibBytes)
+	zlibReader, err := zlib.NewReader(bytesReader)
+    if err != nil {
+		return "", err
+    }
+
+	zlibBuffer := new(bytes.Buffer)
+	zlibBuffer.ReadFrom(zlibReader)
+
+	return zlibBuffer.String(), nil
 }
