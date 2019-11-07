@@ -72,7 +72,7 @@ func decompressZlibToString(zlibBytes []byte) (string, error) {
 	}
 
 	zlibBuffer := new(bytes.Buffer)
-	err := zlibBuffer.ReadFrom(zlibReader)
+	_, err := zlibBuffer.ReadFrom(zlibReader)
 	if err != nil {
 		return "", err
 	}
