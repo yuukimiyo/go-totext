@@ -7,7 +7,7 @@ import (
 	"io"
 )
 
-// Deflate is function of deflate strings to Base64 strings.
+// Deflate is function for deflate strings to Base64 strings.
 func Deflate(text string) (string, error) {
 	zlibBuffer, err := compressStringToZlib(text)
 	if err != nil {
@@ -37,12 +37,12 @@ func compressStringToZlib(text string) (*bytes.Buffer, error) {
 	return zlibBuffer, nil
 }
 
-func convertBytesToBase64String(b []byte) (string, error) {
+func convertBytesToBase64String(b []byte) string {
 	base64String := base64.StdEncoding.EncodeToString(b)
-	return base64String, nil
+	return base64String
 }
 
-// Inflate is function of inflate base64 strings to plain strings.
+// Inflate is function for inflate base64 strings to plain strings.
 func Inflate(base64String string) (string, error) {
 	bytes, err := convertBase64StringToBytes(base64String)
 	if err != nil {
@@ -68,6 +68,7 @@ func convertBase64StringToBytes(base64String string) ([]byte, error) {
 
 func decompressZlibToString(zlibBytes []byte) (string, error) {
 	bytesReader := bytes.NewReader(zlibBytes)
+
 	zlibReader, err := zlib.NewReader(bytesReader)
 
 	if err != nil {
@@ -75,7 +76,8 @@ func decompressZlibToString(zlibBytes []byte) (string, error) {
 	}
 
 	zlibBuffer := new(bytes.Buffer)
-	err := zlibBuffer.ReadFrom(zlibReader)
+	_, err = zlibBuffer.ReadFrom(zlibReader)
+
 	if err != nil {
 		return "", err
 	}
