@@ -14,7 +14,7 @@ func Deflate(text string) (string, error) {
 		panic(err)
 	}
 
-	base64String, _ := convertBytesToBase64String(zlibBuffer.Bytes())
+	base64String := convertBytesToBase64String(zlibBuffer.Bytes())
 
 	if err != nil {
 		panic(err)
