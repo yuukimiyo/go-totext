@@ -1,39 +1,40 @@
 package totext
 
 import (
-    "io"
-    "bytes"
-    "compress/zlib"
+	"bytes"
+	"compress/zlib"
 	"encoding/base64"
+	"io"
 )
 
-
+// Deflate is function of deflate strings to Base64 strings.
 func Deflate(text string) (string, error) {
-
-    zlibBuffer, err := compressStringToZlib(text)
-    if err != nil {
-        panic(err)
-    }
+	zlibBuffer, err := compressStringToZlib(text)
+	if err != nil {
+		panic(err)
+	}
 
 	base64String, _ := convertBytesToBase64String(zlibBuffer.Bytes())
-    if err != nil {
-        panic(err)
-    }
+
+	if err != nil {
+		panic(err)
+	}
 
 	return base64String, nil
 }
 
 func compressStringToZlib(text string) (*bytes.Buffer, error) {
-
 	textBuffer := bytes.NewBufferString(text)
-    zlibBuffer := new(bytes.Buffer)
-    zlibWriter := zlib.NewWriter(zlibBuffer)
-    defer zlibWriter.Close()
+	zlibBuffer := new(bytes.Buffer)
+	zlibWriter := zlib.NewWriter(zlibBuffer)
 
-    if _, err := io.Copy(zlibWriter, textBuffer); err != nil {
-        return nil, err
-    }
-    return zlibBuffer, nil
+	defer zlibWriter.Close()
+
+	if _, err := io.Copy(zlibWriter, textBuffer); err != nil {
+		return nil, err
+	}
+
+	return zlibBuffer, nil
 }
 
 func convertBytesToBase64String(b []byte) (string, error) {
@@ -41,8 +42,8 @@ func convertBytesToBase64String(b []byte) (string, error) {
 	return base64String, nil
 }
 
+// Inflate is function of inflate base64 strings to plain strings.
 func Inflate(base64String string) (string, error) {
-
 	bytes, err := convertBase64StringToBytes(base64String)
 	if err != nil {
 		return "", err
@@ -57,25 +58,27 @@ func Inflate(base64String string) (string, error) {
 }
 
 func convertBase64StringToBytes(base64String string) ([]byte, error) {
-
 	bytes, err := base64.StdEncoding.DecodeString(base64String)
-    if err != nil {
+	if err != nil {
 		return nil, err
-    }
+	}
 
 	return bytes, nil
 }
 
 func decompressZlibToString(zlibBytes []byte) (string, error) {
-
 	bytesReader := bytes.NewReader(zlibBytes)
 	zlibReader, err := zlib.NewReader(bytesReader)
-    if err != nil {
+
+	if err != nil {
 		return "", err
-    }
+	}
 
 	zlibBuffer := new(bytes.Buffer)
-	zlibBuffer.ReadFrom(zlibReader)
+	err := zlibBuffer.ReadFrom(zlibReader)
+	if err != nil {
+		return "", err
+	}
 
 	return zlibBuffer.String(), nil
 }
