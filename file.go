@@ -7,22 +7,22 @@ import (
 
 // ReadLine is function for iterate lines on bufio.Reader.
 // The example value for limitBytes is 1000000.
-func ReadLine(rd *bufio.Reader, limitBytes int) (string, bool, error) {
+func ReadLineOld(rd *bufio.Reader, limitBytes int) (string, bool, error) {
 	iseof := false
 	buf := make([]byte, 0, limitBytes)
 
 	for {
 		l, p, e := rd.ReadLine()
+		buf = append(buf, l...)
+
 		if e != nil {
 			if e == io.EOF {
 				iseof = true
 				break
 			} else {
-				return "", false, e
+				return string(buf), false, e
 			}
 		}
-
-		buf = append(buf, l...)
 
 		if !p {
 			break
@@ -30,4 +30,17 @@ func ReadLine(rd *bufio.Reader, limitBytes int) (string, bool, error) {
 	}
 
 	return string(buf), iseof, nil
+}
+
+// ReadLine is function for iterate lines on bufio.Reader.
+// lineBuffer is byte slice, you can use as make([]byte, 0, 1024*1024) or more simply []byte.
+func ReadLine(reader *bufio.Reader, lineBuffer []byte) (string, error) {
+	for {
+		l, hasNext, e := reader.ReadLine()
+		lineBuffer = append(lineBuffer, l...)
+
+		if !hasNext || e != nil {
+			return string(lineBuffer), e
+		}
+	}
 }
