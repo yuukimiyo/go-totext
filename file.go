@@ -8,9 +8,13 @@ import (
 	"path/filepath"
 )
 
-// ReadLine is new function to iterate lines on bufio.Reader.
-// lineBuffer is byte slice, you can use as make([]byte, 0, 1024*1024) or more simply []byte.
-// example:
+// ReadLine is function to iterate lines on bufio.Reader.
+// lineBuffer should be byte slice to buffer data, you can make it as make([]byte, 0, 1024*1024) or more simply []byte.
+// 3rd option number of 'make()' will be effect to read speed,
+// It's depends on average size of length of each lines, I think.
+// In many cases it's enough to 1024*1024.
+//
+// usage:
 // var rd = bufio.NewReaderSize(fp, bufferSize)
 // for {
 //     line, err := readLine(rd, make([]byte, 0, 1024*1024))
@@ -33,10 +37,10 @@ func ReadLine(reader *bufio.Reader, lineBuffer []byte) (string, error) {
 	}
 }
 
-// ReadLineOld is old function to iterate lines on bufio.Reader.
+// ReadLineNormal is old function to iterate lines on bufio.Reader.
 // *** this is old function. ***
 // The example value for limitBytes is 1000000.
-func ReadLineOld(rd *bufio.Reader, limitBytes int) (string, bool, error) {
+func ReadLineNormal(rd *bufio.Reader, limitBytes int) (string, bool, error) {
 	iseof := false
 	buf := make([]byte, 0, limitBytes)
 
@@ -84,8 +88,7 @@ func WriteLines(filename string, lines []string, linesep string, modeflag string
 	return nil
 }
 
-//MakeDir is function to make dir.
-// Make dir if not exists.
+// MakeDir is function to make dir if not exists.
 func MakeDir(path string) error {
 	err := os.Mkdir(path, 0755)
 	if err == nil || os.IsExist(err) {
@@ -95,7 +98,7 @@ func MakeDir(path string) error {
 	return err
 }
 
-// Dirs is function to get dir list from dirpath.
+// Dirs is function to get dir list from inputted path.
 func Dirs(dataRoot string) ([]string, error) {
 	var dataDirs []string
 
@@ -113,7 +116,7 @@ func Dirs(dataRoot string) ([]string, error) {
 	return dataDirs, nil
 }
 
-// Files is function to get file list from file dir.
+// Files is function to get file list from inputted path.
 func Files(dataRoot string) ([]string, error) {
 	var dataFiles []string
 
