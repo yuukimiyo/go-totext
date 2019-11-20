@@ -3,6 +3,8 @@ package totext
 import (
 	"bufio"
 	"io"
+	"io/ioutil"
+	"path/filepath"
 )
 
 // ReadLineOld is old function for iterate lines on bufio.Reader.
@@ -55,4 +57,44 @@ func ReadLine(reader *bufio.Reader, lineBuffer []byte) (string, error) {
 			return string(lineBuffer), e
 		}
 	}
+}
+
+// Dirs is function to get dir list from dirpath.
+func Dirs(dataRoot string) []string {
+	glog.V(3).Infof("datadir: " + dataRoot)
+
+	var dataDirs []string
+
+	files, err := ioutil.ReadDir(dataRoot)
+	if err != nil {
+		glog.Error(err)
+	}
+
+	for _, file := range files {
+		if file.IsDir() {
+			dataDirs = append(dataDirs, filepath.Join(dataRoot, file.Name()))
+		}
+	}
+
+	return dataDirs
+}
+
+// Files is function to get file list from file dir.
+func Files(dataRoot string) []string {
+	var dataFiles []string
+
+	files, err := ioutil.ReadDir(dataRoot)
+	if err != nil {
+		glog.Error(err)
+	}
+
+	for _, f := range files {
+		fullpath := filepath.Join(dataRoot, f.Name())
+		// _, err := os.Stat(fullpath)
+		// if err != nil {
+		// }
+		dataFiles = append(dataFiles, fullpath)
+	}
+
+	return dataFiles
 }
