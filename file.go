@@ -2,6 +2,7 @@ package totext
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -78,19 +79,16 @@ func WriteLines(filename string, lines []string, linesep string, modeflag string
 	}
 	defer f.Close()
 
+	w := bufio.NewWriter(f)
+
 	if linesep == "" {
+		// 改行文字列が空白だった場合
 		for _, line := range lines {
-			_, err := f.WriteString(line)
-			if err != nil {
-				return err
-			}
+			fmt.Print(w, line)
 		}
 	} else {
 		for _, line := range lines {
-			_, err := f.WriteString(line + linesep)
-			if err != nil {
-				return err
-			}
+			fmt.Println(line)
 		}
 	}
 
