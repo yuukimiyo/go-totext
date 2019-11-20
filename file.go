@@ -84,11 +84,11 @@ func WriteLines(filename string, lines []string, linesep string, modeflag string
 	if linesep == "" {
 		// 改行文字列が空白だった場合
 		for _, line := range lines {
-			fmt.Print(w, line)
+			fmt.Fprint(w, line)
 		}
 	} else {
 		for _, line := range lines {
-			fmt.Println(w, line)
+			fmt.Fprintln(w, line)
 		}
 	}
 
