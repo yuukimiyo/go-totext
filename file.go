@@ -88,7 +88,7 @@ func WriteLines(filename string, lines []string, linesep string, modeflag string
 		}
 	} else {
 		for _, line := range lines {
-			fmt.Println(line)
+			fmt.Println(w, line)
 		}
 	}
 
