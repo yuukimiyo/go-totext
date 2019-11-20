@@ -91,18 +91,17 @@ func MakeDir(path string) error {
 	if err == nil || os.IsExist(err) {
 		return nil
 	}
+
 	return err
 }
 
 // Dirs is function to get dir list from dirpath.
-func Dirs(dataRoot string) []string {
-	glog.V(3).Infof("datadir: " + dataRoot)
-
+func Dirs(dataRoot string) ([]string, error) {
 	var dataDirs []string
 
 	files, err := ioutil.ReadDir(dataRoot)
 	if err != nil {
-		glog.Error(err)
+		return dataDirs, err
 	}
 
 	for _, file := range files {
@@ -111,16 +110,16 @@ func Dirs(dataRoot string) []string {
 		}
 	}
 
-	return dataDirs
+	return dataDirs, nil
 }
 
 // Files is function to get file list from file dir.
-func Files(dataRoot string) []string {
+func Files(dataRoot string) ([]string, error) {
 	var dataFiles []string
 
 	files, err := ioutil.ReadDir(dataRoot)
 	if err != nil {
-		glog.Error(err)
+		return dataFiles, err
 	}
 
 	for _, f := range files {
@@ -131,5 +130,5 @@ func Files(dataRoot string) []string {
 		dataFiles = append(dataFiles, fullpath)
 	}
 
-	return dataFiles
+	return dataFiles, nil
 }
