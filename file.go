@@ -67,7 +67,7 @@ func ReadLineNormal(rd *bufio.Reader, limitBytes int) (string, bool, error) {
 }
 
 // WriteLines is function to write string array.
-func WriteLines(filename string, lines []string, linesep string, modeflag string, permission os.FileMode) error {
+func WriteLines(filename string, lines []string, linesep bool, modeflag string, permission os.FileMode) error {
 	mode := os.O_WRONLY | os.O_CREATE
 	if modeflag == "a" {
 		mode = os.O_WRONLY | os.O_APPEND
@@ -81,8 +81,7 @@ func WriteLines(filename string, lines []string, linesep string, modeflag string
 
 	w := bufio.NewWriter(f)
 
-	if linesep == "" {
-		// 改行文字列が空白だった場合
+	if !linesep {
 		for _, line := range lines {
 			fmt.Fprint(w, line)
 		}
