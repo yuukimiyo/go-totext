@@ -78,10 +78,19 @@ func WriteLines(filename string, lines []string, linesep string, modeflag string
 	}
 	defer f.Close()
 
-	for _, line := range lines {
-		_, err := f.WriteString(line + linesep)
-		if err != nil {
-			return err
+	if linesep == "" {
+		for _, line := range lines {
+			_, err := f.WriteString(line)
+			if err != nil {
+				return err
+			}
+		}
+	} else {
+		for _, line := range lines {
+			_, err := f.WriteString(line + linesep)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
