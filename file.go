@@ -81,6 +81,8 @@ func WriteLines(filename string, lines []string, linesep bool, modeflag string, 
 
 	w := bufio.NewWriter(f)
 
+	fmt.Fprint(w, []byte{239, 187, 191})
+
 	if !linesep {
 		for _, line := range lines {
 			fmt.Fprint(w, line)
