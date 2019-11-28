@@ -10,9 +10,9 @@ import (
 )
 
 // ReadLine is function to iterate lines on bufio.Reader.
-// lineBuffer should be byte slice to buffer data, you can make it as make([]byte, 0, 1024*1024) or more simply []byte.
+// lineBuffer should be byte slice to buffer data, it can make as make([]byte, 0, 1024*1024) or more simply []byte.
 // 3rd option number of 'make()' will be effect to read speed,
-// It's depends on average size of length of each lines, I think.
+// It's depends on average length of each lines, I think.
 // In many cases it's enough to 1024*1024.
 //
 // usage:
