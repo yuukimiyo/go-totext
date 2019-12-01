@@ -2,7 +2,6 @@ package totext
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -67,9 +66,9 @@ func ReadLineNormal(rd *bufio.Reader, limitBytes int) (string, bool, error) {
 }
 
 // WriteLines is function to write string array.
-func WriteLines(filename string, lines []string, linesep bool, modeflag string, permission os.FileMode) error {
+func WriteLines(filename string, lines []string, linesep string, modeStr string, permission os.FileMode) error {
 	mode := os.O_WRONLY | os.O_CREATE
-	if modeflag == "a" {
+	if modeStr == "a" {
 		mode = os.O_WRONLY | os.O_APPEND
 	}
 
@@ -79,17 +78,15 @@ func WriteLines(filename string, lines []string, linesep bool, modeflag string, 
 	}
 	defer f.Close()
 
-	w := bufio.NewWriter(f)
+	_, err = f.Write([]byte{239, 187, 191})
+	if err != nil {
+		return err
+	}
 
-	fmt.Fprint(w, []byte{239, 187, 191})
-
-	if !linesep {
-		for _, line := range lines {
-			fmt.Fprint(w, line)
-		}
-	} else {
-		for _, line := range lines {
-			fmt.Fprintln(w, line)
+	for _, line := range lines {
+		_, err = f.WriteString(line + linesep)
+		if err != nil {
+			return err
 		}
 	}
 
